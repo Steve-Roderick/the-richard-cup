@@ -1,1 +1,227 @@
-hello world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE RICHARD CUP (TRC)</title>
+    <style>
+        /* INLINE CSS FOR THE 90s VIBE */
+        @font-face {
+            font-family: 'Pixelated';
+            src: url('https://fonts.gstatic.com/s/pressstart2p/v9/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background-color: #000000;
+            background-image: url('data:image/gif;base64,R0lGODlhCgAKAIABAP8AAAAAAP///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJAQABACwAAAAACgAKAAACFhAnkeocVp6t222d4Xp+g+8ZAgIAOw=='); /* tiny black dot gif for texture */
+            color: #00FF00; /* Neon Green */
+            font-family: 'Comic Sans MS', 'Pixelated', cursive;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            border: 5px ridge #FF00FF;
+            background-color: #333333;
+            box-shadow: 10px 10px 5px #888888;
+        }
+
+        h1 {
+            font-size: 6rem;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            text-shadow: 5px 5px #0000FF, 10px 10px #FF0000;
+            animation: colorchange 2s infinite alternate;
+        }
+
+        @keyframes colorchange {
+            0% { color: #00FF00; }
+            50% { color: #FFFF00; }
+            100% { color: #FF00FF; }
+        }
+
+        #countdown {
+            font-size: 2rem;
+            background-color: #000;
+            border: 3px inset #C0C0C0;
+            padding: 20px;
+            margin: 20px;
+            color: #FFFF00;
+        }
+
+        .clocks {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .clock {
+            background-color: #00008B; /* Dark Blue */
+            border: 5px outset #ADD8E6; /* Light Blue */
+            padding: 10px 20px;
+            width: 200px;
+        }
+        
+        .clock h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            color: #FFFFFF;
+            text-decoration: underline;
+        }
+
+        .clock p {
+            font-family: 'Courier New', monospace;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD700; /* Gold */
+            margin: 0;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+        }
+
+        img.spinner {
+            width: 50px;
+            height: 50px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>THE RICHARD CUP</h1>
+
+        <marquee behavior="scroll" direction="left" scrollamount="10">
+            <img src="https://www.useragentman.com/shared/images/wip.gif" alt="...">
+			Where Gods sleep, Richard Rises - The First Richard Cup - 2025 - Sept 19th, 2025 - Sundown!
+            <img src="https://www.useragentman.com/shared/images/wip.gif" alt="...">
+        </marquee>
+
+        <h2>Time until Sept 19th 2025 @ 3PM Eastern:</h2>
+        <div id="countdown">
+            Loading...
+        </div>
+
+        <hr>
+        <h2>--- TIME ZONE MANIA ---</h2>
+        <div class="clocks">
+            <div class="clock">
+                <h3>Ottawa</h3>
+                <p id="time-ottawa">--:--:--</p>
+            </div>
+            <div class="clock">
+                <h3>MTL</h3>
+                <p id="time-montreal">--:--:--</p>
+            </div>
+            <div class="clock">
+                <h3>Van</h3>
+                <p id="time-vancouver">--:--:--</p>
+            </div>
+            <div class="clock">
+                <h3>Sydney</h3>
+                <p id="time-sydney">--:--:--</p>
+            </div>
+            <div class="clock">
+                <h3>Seoul</h3>
+                <p id="time-seoul">--:--:--</p>
+            </div>
+            <div class="clock">
+                <h3>Kyiv</h3>
+                <p id="time-kyiv">--:--:--</p>
+            </div>
+            <div class="clock">
+                <h3>London</h3>
+                <p id="time-london">--:--:--</p>
+            </div>
+        </div>
+
+        <footer>
+            <p></p>
+            <p>&copy;All Rights Reserved.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // INLINE JAVASCRIPT
+
+        // 1. COUNTDOWN TIMER
+        const countdownElement = document.getElementById('countdown');
+        // Set the date we're counting down to.
+        // NOTE: JavaScript months are 0-11, so September is 8.
+        // The time is set in the Eastern Time Zone (America/New_York)
+        const countdownDate = new Date("2025-09-19T15:00:00.000-04:00").getTime();
+
+        const countdownInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                countdownElement.innerHTML = "EXPIRED";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const ms = distance % 1000;
+
+            countdownElement.innerHTML = 
+                `${days}d ${hours}h ${minutes}m ${seconds}s <br> ${String(ms).padStart(3, '0')}ms`;
+
+        }, 47); // Update frequently for smooth ms counter
+
+        // 2. WORLD CLOCKS
+        const timeZones = {
+            'ottawa': 'America/Toronto',
+            'montreal': 'America/Toronto',
+            'vancouver': 'America/Vancouver',
+            'sydney': 'Australia/Sydney',
+            'seoul': 'Asia/Seoul',
+            'kyiv': 'Europe/Kiev',
+            'london': 'Europe/London'
+        };
+
+        function updateClocks() {
+            const now = new Date();
+
+            for (const [city, timeZone] of Object.entries(timeZones)) {
+                const element = document.getElementById(`time-${city}`);
+                if (element) {
+                    try {
+                        const timeString = now.toLocaleTimeString('en-US', { 
+                            timeZone: timeZone,
+                            hour12: false,
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        });
+                        element.textContent = timeString;
+                    } catch (e) {
+                        console.error(`Could not get time for ${timeZone}:`, e);
+                        element.textContent = "Error";
+                    }
+                }
+            }
+        }
+        
+        // Initial call and set interval to update every second
+        updateClocks();
+        setInterval(updateClocks, 1000);
+
+    </script>
+</body>
+</html>
