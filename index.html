@@ -114,9 +114,43 @@
             Loading...
         </div>
 
+
+
         <hr>
         <h2>RICHARD</h2>
         <h2>MANIA</h2>
+
+
+        <div id="link-placeholder"></div>
+
+            <script>
+        // 1. SET YOUR TARGET DATE AND TIME
+        // new Date('YYYY-MM-DDTHH:MM:SS'); e.g., '2025-10-31T09:00:00' for Oct 31, 2025 at 9 AM
+        //const countdownDate = new Date("2025-09-19T14:17:00.000-04:00").getTime();
+        const targetDate = new Date("2025-09-19T14:17:00.000-04:00").getTime();
+
+        // 2. GET THE CURRENT DATE AND TIME
+        const currentDate = new Date();
+
+        // 3. COMPARE THE DATES
+        // If the current date is greater than or equal to the target date...
+        if (currentDate >= targetDate) {
+
+            // 4. FIND THE PLACEHOLDER ELEMENT
+            const placeholder = document.getElementById('link-placeholder');
+
+            // 5. ADD YOUR HTML TO THE PAGE
+            // You can put any HTML you want inside the backticks ``
+            placeholder.innerHTML = `<br/><br/>
+                <a href="./bank/index.html" style="font-size: 1.2em; color: red;">
+                    The Bank of Richard
+                </a>
+                <br/>
+                <br/>
+            `;
+        }
+    </script>
+
         <div class="clocks">
             <div class="clock">
                 <h3>Ottawa</h3>
