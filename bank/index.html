@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The Bank of Richard</title>
+
+<style>
+  :root{
+    --bg1:#0f172a;
+    --bg2:#07103a;
+    --card:#0b1220;
+    --accent:#ffd166;
+    --muted:#bfc7d9;
+  }
+  html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{
+    background: linear-gradient(160deg,var(--bg1), var(--bg2));
+    color: #e6eef8;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+    box-sizing:border-box;
+  }
+
+  .wrap{
+    width:min(760px,96vw);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+    border-radius:16px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    padding:20px;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .logo{
+    width:56px;
+    height:56px;
+    flex:0 0 56px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--accent), #ff9a3c);
+    display:grid;
+    place-items:center;
+    color:#0b1220;
+    font-weight:700;
+    font-family:monospace;
+    font-size:20px;
+    box-shadow: 0 6px 18px rgba(255,169,77,0.12), inset 0 -4px 8px rgba(0,0,0,0.12);
+  }
+  h1{font-size:18px;margin:0;}
+  p.lead{margin:0;color:var(--muted);font-size:13px;margin-top:4px}
+
+  ol#list{
+    list-style:none;
+    padding:6px;
+    margin:16px 0 6px 0;
+    display:grid;
+    gap:10px;
+  }
+
+  li.item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 12px;
+    border-radius:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+    border:1px solid rgba(255,255,255,0.025);
+    box-shadow: 0 6px 14px rgba(2,6,23,0.45);
+    touch-action: none; /* prevents default gestures while dragging */
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  .handle{
+    width:40px;height:40px;border-radius:8px;
+    background:linear-gradient(180deg,#081226,#0f2238);
+    display:grid;place-items:center;
+    border:1px solid rgba(255,255,255,0.03);
+    font-weight:700;
+    color:var(--muted);
+    flex-shrink:0;
+  }
+
+  .name{
+    font-size:16px;
+    font-weight:600;
+    letter-spacing:0.2px;
+  }
+
+  .meta{
+    margin-left:auto;color:var(--muted);font-size:13px;
+  }
+
+  /* placeholder shown while dragging */
+  .placeholder{
+    height:56px;
+    border-radius:12px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.015), rgba(0,0,0,0.01));
+    border:1px dashed rgba(255,255,255,0.06);
+    box-shadow: none;
+    opacity:0.9;
+    transform: scaleY(0.98);
+  }
+
+  /* the floating clone while dragging */
+  .dragging-clone{
+    position:fixed;
+    z-index:9999;
+    left:0;top:0;
+    width: calc(min(760px,96vw) - 44px);
+    max-width:720px;
+    pointer-events:none;
+    margin:0;
+    transform-origin: 0 0;
+    will-change: transform;
+    opacity:0.98;
+  }
+
+  .hint{
+    margin-top:12px;color:var(--muted);font-size:13px;
+  }
+
+  .controls{
+    display:flex;gap:8px;margin-top:12px;
+  }
+  button.btn{
+    background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;font-size:13px;
+  }
+
+  @media (max-width:420px){
+    .dragging-clone{ width: calc(100vw - 44px); }
+    .handle{width:36px;height:36px}
+    .placeholder{height:52px}
+  }
+</style>
+
+
+    <style>
+        /* INLINE CSS FOR THE 90s VIBE
+         Update 940*/
+        @font-face {
+            font-family: 'Pixelated';
+            src: url('https://fonts.gstatic.com/s/pressstart2p/v9/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background-color: #000000;
+            background-image: url('data:image/gif;base64,R0lGODlhCgAKAIABAP8AAAAAAP///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJAQABACwAAAAACgAKAAACFhAnkeocVp6t222d4Xp+g+8ZAgIAOw=='); /* tiny black dot gif for texture */
+            color: #00FF00; /* Neon Green */
+            font-family: 'Comic Sans MS', 'Pixelated', cursive;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            border: 5px ridge #FF00FF;
+            background-color: #333333;
+            box-shadow: 10px 10px 5px #888888;
+        }
+
+        h1 {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0px;
+            text-shadow: 5px 5px #0000FF, 10px 10px #FF0000;
+            animation: colorchange 2s infinite alternate;
+        }
+
+        @keyframes colorchange {
+            0% { color: #00FF00; }
+            50% { color: #FFFF00; }
+            100% { color: #FF00FF; }
+        }
+
+        #countdown {
+            font-size: 2rem;
+            background-color: #000;
+            border: 3px inset #C0C0C0;
+            padding: 20px;
+            margin: 20px;
+            color: #FFFF00;
+        }
+
+        .clocks {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .clock {
+            background-color: #00008B; /* Dark Blue */
+            border: 5px outset #ADD8E6; /* Light Blue */
+            padding: 10px 20px;
+            width: 200px;
+        }
+
+        .clock h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            color: #FFFFFF;
+            text-decoration: underline;
+        }
+
+        .clock p {
+            font-family: 'Courier New', monospace;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD700; /* Gold */
+            margin: 0;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+        }
+
+        img.spinner {
+            width: 50px;
+            height: 50px;
+        }
+
+    </style>
+</head>
+<body>
+  <div class="wrap" role="application" aria-label="Sortable names app">
+    <header>
+      <div>
+        <h1>The Bank of  Richard</h1>
+        <p class="lead">Drag and drop (touch/mouse) to reorder</p>
+      </div>
+    </header>
+
+    <ol id="list" aria-live="polite">
+      <li class="item" data-id="1"><div class="handle" aria-hidden="true">1</div><div class="name">Jaqcques Villeneuve</div><div class="meta">#1</div></li>
+      <li class="item" data-id="2"><div class="handle" aria-hidden="true">2</div><div class="name">Hermann Maier</div><div class="meta">#2</div></li>
+      <li class="item" data-id="3"><div class="handle" aria-hidden="true">3</div><div class="name">Larry Walker</div><div class="meta">#3</div></li>
+      <li class="item" data-id="4"><div class="handle" aria-hidden="true">4</div><div class="name">Martin Brodeur</div><div class="meta">#4</div></li>
+      <li class="item" data-id="5"><div class="handle" aria-hidden="true">5</div><div class="name">Lance Armstrong</div><div class="meta">#5</div></li>
+    </ol>
+
+    <div class="controls" aria-hidden="false">
+      <button class="btn" id="resetBtn" type="button">Reset order</button>
+      <button class="btn" id="showBtn" type="button">Show current order</button>
+    </div>
+
+    <div class="hint" id="out">Current order: 1, 2, 3, 4, 5</div>
+  </div>
+
+<script>
+/*
+  Mobile-friendly drag & drop using Pointer Events.
+  Works with mouse, touch, and stylus. No external libs.
+*/
+
+(function(){
+  const list = document.getElementById('list');
+  const out = document.getElementById('out');
+  const resetBtn = document.getElementById('resetBtn');
+  const showBtn = document.getElementById('showBtn');
+
+  let dragging = null;        // original element being dragged
+  let clone = null;           // visible clone that follows pointer
+  let placeholder = null;     // placeholder element in list
+  let startY = 0, offsetY = 0;
+  let listRect = null;
+  let pointerId = null;
+
+  // Create placeholder
+  function makePlaceholder(height){
+    const ph = document.createElement('li');
+    ph.className = 'placeholder';
+    ph.style.height = (height ? height + 'px' : '');
+    return ph;
+  }
+
+  function updateOutput(){
+    const ids = Array.from(list.querySelectorAll('li.item')).map(li => li.dataset.id);
+    out.textContent = 'Current order: ' + ids.join(', ');
+  }
+
+  function onPointerDown(e){
+    // find the item (or its parent) that was touched
+    const li = e.target.closest('li.item');
+    if(!li) return;
+    e.preventDefault();
+
+    dragging = li;
+    pointerId = e.pointerId != null ? e.pointerId : ('p'+Date.now());
+    // measure
+    const rect = li.getBoundingClientRect();
+    listRect = list.getBoundingClientRect();
+
+    startY = (e.clientY != null ? e.clientY : e.touches && e.touches[0].clientY) ;
+    offsetY = startY - rect.top;
+
+    // create clone
+    clone = li.cloneNode(true);
+    clone.classList.add('dragging-clone');
+    clone.style.width = Math.min(listRect.width, window.innerWidth - 44) + 'px';
+    clone.style.left = (listRect.left + 12) + 'px';
+    clone.style.top = (rect.top) + 'px';
+    clone.style.boxShadow = '0 24px 48px rgba(2,6,23,0.7)';
+    clone.style.transform = 'scale(1.02)';
+    document.body.appendChild(clone);
+
+    // create placeholder
+    placeholder = makePlaceholder(rect.height);
+    li.parentNode.insertBefore(placeholder, li.nextSibling);
+
+    // hide original (but keep accessible)
+    li.style.visibility = 'hidden';
+
+    // capture pointer
+    if(e.pointerId) {
+      (e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId));
+    } else {
+      // fallback - attach touch listeners if needed (handled below)
+    }
+
+    window.addEventListener('pointermove', onPointerMove, {passive:false});
+    window.addEventListener('pointerup', onPointerUp, {passive:false});
+    window.addEventListener('pointercancel', onPointerUp, {passive:false});
+  }
+
+  function onPointerMove(e){
+    if(!dragging) return;
+    e.preventDefault();
+    const clientY = e.clientY != null ? e.clientY : (e.touches && e.touches[0] && e.touches[0].clientY);
+    if(clientY == null) return;
+
+    // move clone
+    const top = clientY - offsetY;
+    clone.style.top = Math.max(8, Math.min(window.innerHeight - 40, top)) + 'px';
+
+    // figure out where to move placeholder
+    const midY = clientY;
+    // get all items except the one being dragged and the placeholder
+    const children = Array.from(list.children).filter(ch => ch !== placeholder && ch !== dragging);
+
+    let inserted = false;
+    for(const child of children){
+      const r = child.getBoundingClientRect();
+      if(midY < r.top + r.height/2){
+        if(list.contains(placeholder)) list.insertBefore(placeholder, child);
+        else list.insertBefore(placeholder, child);
+        inserted = true;
+        break;
+      }
+    }
+    if(!inserted){
+      list.appendChild(placeholder);
+    }
+  }
+
+  function onPointerUp(e){
+    if(!dragging) return;
+    e.preventDefault();
+
+    // remove clone and show original in new position
+    if(placeholder && dragging){
+      list.insertBefore(dragging, placeholder);
+      placeholder.remove();
+    }
+    // cleanup
+    dragging.style.visibility = '';
+    dragging = null;
+    if(clone && clone.parentNode) clone.parentNode.removeChild(clone);
+    clone = null;
+    placeholder = null;
+    pointerId = null;
+
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+
+    updateOutput();
+  }
+
+  // attach pointerdown on list (delegation)
+  list.addEventListener('pointerdown', function(e){
+    // only start drag when user touches the handle or the list item itself
+    if(e.button && e.button !== 0) return; // only left click
+    onPointerDown(e);
+  });
+
+  // For older devices where pointer events might not be supported, add touch listeners
+  if(!window.PointerEvent){
+    let touchIdentifier = null;
+    list.addEventListener('touchstart', function(e){
+      if(touchIdentifier != null) return; // ignore multi-touch
+      const t = e.changedTouches[0];
+      touchIdentifier = t.identifier;
+      // create synthetic pointer-like event object
+      onPointerDown({ target: document.elementFromPoint(t.clientX,t.clientY), clientY: t.clientY, pointerId: touchIdentifier, touches: e.touches, preventDefault: ()=>e.preventDefault(), pointerType:'touch' });
+    }, {passive:false});
+
+    window.addEventListener('touchmove', function(e){
+      const t = Array.from(e.changedTouches).find(tt=>tt.identifier===touchIdentifier);
+      if(!t) return;
+      onPointerMove({ clientY: t.clientY, touches: e.touches, preventDefault: ()=>e.preventDefault() });
+    }, {passive:false});
+
+    window.addEventListener('touchend', function(e){
+      const t = Array.from(e.changedTouches).find(tt=>tt.identifier===touchIdentifier);
+      if(!t) return;
+      onPointerUp({ clientY: t.clientY, touches: e.touches, preventDefault: ()=>e.preventDefault() });
+      touchIdentifier = null;
+    }, {passive:false});
+  }
+
+  // Buttons
+  resetBtn.addEventListener('click', function(){
+    // reset to original order (1..5)
+    const original = ['1','2','3','4','5'];
+    original.forEach(id=>{
+      const el = Array.from(list.querySelectorAll('li.item')).find(li=>li.dataset.id===id);
+      if(el) list.appendChild(el);
+    });
+    updateOutput();
+  });
+
+  showBtn.addEventListener('click', function(){
+    updateOutput();
+    // mild feedback
+    out.animate([{opacity:0.6},{opacity:1}],{duration:300});
+  });
+
+  // initial output
+  updateOutput();
+
+  // Accessibility: allow keyboard reordering via Arrow keys when an item is focused
+  list.addEventListener('keydown', function(e){
+    const li = document.activeElement.closest && document.activeElement.closest('li.item');
+    if(!li) return;
+    if(e.key === 'ArrowUp' || e.key === 'ArrowLeft'){
+      e.preventDefault();
+      const prev = li.previousElementSibling;
+      if(prev) list.insertBefore(li, prev);
+      updateOutput();
+      li.focus();
+    } else if(e.key === 'ArrowDown' || e.key === 'ArrowRight'){
+      e.preventDefault();
+      const next = li.nextElementSibling;
+      if(next) list.insertBefore(next, li);
+      updateOutput();
+      li.focus();
+    }
+  });
+
+  // make items focusable for keyboard support
+  Array.from(list.children).forEach((li)=>{
+    li.setAttribute('tabindex','0');
+    li.style.outline = 'none';
+  });
+
+})();
+</script>
+</body>
+</html>
